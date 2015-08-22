@@ -39,7 +39,23 @@ exports.register = function(opt, cb) {
 
 // 反注册当前用户（需要先登录）
 exports.unregister = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
 
+    assert(typeof opt.name === 'string', 'invalid argument: opt.name')
+
+    var url = vstr(base_url + '_users/org.couchdb.user:${name|uricom}', opt)
+    var request_opt = {
+        url: url,
+        method: 'DELETE',
+        json: true
+    }
+    return xrequest(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }
 }
 
 // 修改当前用户密码（需要先登录）
@@ -83,6 +99,24 @@ exports.logout = function(opt, cb) {
     var request_opt = {
         url: url,
         method: 'DELETE',
+        json: true
+    }
+    return xrequest(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }
+}
+
+exports.session = function(opt, cb) {
+    // ignore opt
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    var url = base_url + '_session'
+    var request_opt = {
+        url: url,
+        method: 'GET',
         json: true
     }
     return xrequest(request_opt, request_cb)
