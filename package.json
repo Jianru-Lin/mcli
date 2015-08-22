@@ -1,11 +1,11 @@
 {
   "name": "mcli",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "miaodeli command line interface.",
   "main": "index.js",
   "bin": {
-    "mcli-register": "mcli-register.js",
-    "mcli-unregister": "mcli-unregister.js"
+    "mcli-register": "bin/mcli-register",
+    "mcli-unregister": "bin/mcli-unregister"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
