@@ -9,6 +9,8 @@ var base_url = 'http://tv.miaodeli.com/couchdb/'
 // - error
 // - result
 
+// 注册一个新用户
+// 注意：完成此操作后并不会自动登录
 exports.register = function(opt, cb) {
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
@@ -33,21 +35,45 @@ exports.register = function(opt, cb) {
     return request(request_opt, request_cb)
 
     function request_cb(err, res, body) {
-        if (err) {
-            cb(err)
-            return
-        }
-
-        cb(null, body)
+        // TODO
     }
 }
 
+// 反注册当前用户（需要先登录）
 exports.unregister = function(opt, cb) {
 
 }
 
-exports.login = function(opt, cb) {
+// 修改当前用户密码（需要先登录）
+exports.change_password = function(opt, cb) {
 
+}
+
+// 登录
+exports.login = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    assert(typeof opt.name === 'string', 'invalid argument: opt.name')
+    assert(typeof opt.password === 'string', 'invalid argument: opt.password')
+
+    var url = base_url + '_session'
+    var body = {
+        name: opt.name,
+        password: opt.password
+    }
+    var request_opt = {
+        url: url,
+        method: 'POST',
+        json: true,
+        body: body
+    }
+    return request(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }
 }
 
 exports.logout = function(opt, cb) {
@@ -64,4 +90,53 @@ exports.update_room = function(opt, cb) {
 
 exports.delete_room = function(opt, cb) {
 
+}
+
+exports.set_state = set_state
+exports.get_state = get_state
+exports.clear_state = clear_state
+exports.state_filename = state_filename
+
+function set_state(state) {
+    assert(typeof state === 'object' && state != null, 'invalid argument: state')
+
+    var fs = require('fs')
+    var filename = state_filename()
+    fs.writeFileSync(filename, JSON.stringify(state, null, 4))
+}
+
+function get_state() {
+    var fs = require('fs')
+    var filename = state_filename()
+    if (!fs.existsSync(filename)) {
+        return null
+    }
+    try {
+        var content = JSON.parse(fs.readFileSync(filename, {encoding: 'utf8'}))
+        return content
+    }
+    catch (err) {
+        return null
+    }
+}
+
+function clear_state() {
+    var fs = require('fs')
+    var filename = state_filename()
+    try {
+        fs.unlinkSync(filename)
+        return true
+    }
+    catch(err) {
+        // ignore error
+        return false
+    }
+}
+
+function state_filename() {
+    var path = require('path')
+    var tmp_dir = process.env['temp']
+    var state_filename = process.env['mcli-state'] || 'mcli-state.json'
+    var full_filename = path.resolve(tmp_dir, state_filename)
+    return full_filename
 }

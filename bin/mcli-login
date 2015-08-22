@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+var m = require('../index')
+var vstr = require('vstr')
+var argv = require('yargs').usage('Usage: mcli-login -n name -p password')
+                           .option('name', {alias: 'n', demand: true, type: 'string'})
+                           .option('password', {alias: 'p', demand: true, type: 'string'})
+                           .argv
+
+var opt = {
+    name: argv.name,
+    password: argv.password
+}
+m.login(opt)

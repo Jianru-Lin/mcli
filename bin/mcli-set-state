@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+var m = require('../index')
+var vstr = require('vstr')
+var argv = require('yargs').usage('Usage: mcli-set-state -v <json-value>')
+                           .option('value', {alias: 'v', demand: true, type: 'string'})
+                           .argv
+
+try {
+    var state = JSON.parse(argv.v)
+    m.set_state(state)
+    console.log('done.')
+}
+catch (err) {
+    console.log(err.toString())
+}
