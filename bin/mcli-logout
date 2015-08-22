@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+
+var m = require('../index')
+var argv = require('yargs').usage('Usage: mcli-logout')
+                           .argv
+
+m.logout()

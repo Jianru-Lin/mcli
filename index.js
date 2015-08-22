@@ -1,6 +1,4 @@
 var assert = require('assert')
-var request = require('request')
-var request_debug = require('request-debug')(request)
 var vstr = require('vstr')
 
 var base_url = 'http://tv.miaodeli.com/couchdb/'
@@ -32,7 +30,7 @@ exports.register = function(opt, cb) {
         json: true,
         body: body
     }
-    return request(request_opt, request_cb)
+    return xrequest(request_opt, request_cb)
 
     function request_cb(err, res, body) {
         // TODO
@@ -69,7 +67,7 @@ exports.login = function(opt, cb) {
         json: true,
         body: body
     }
-    return request(request_opt, request_cb)
+    return xrequest(request_opt, request_cb)
 
     function request_cb(err, res, body) {
         // TODO
@@ -77,7 +75,21 @@ exports.login = function(opt, cb) {
 }
 
 exports.logout = function(opt, cb) {
+    // ignore opt
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
 
+    var url = base_url + '_session'
+    var request_opt = {
+        url: url,
+        method: 'DELETE',
+        json: true
+    }
+    return xrequest(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }
 }
 
 exports.create_room = function(opt, cb) {
@@ -89,6 +101,30 @@ exports.update_room = function(opt, cb) {
 }
 
 exports.delete_room = function(opt, cb) {
+
+}
+
+exports.create_chat = function(opt, cb) {
+
+}
+
+exports.update_chat = function(opt, cb) {
+
+}
+
+exports.delete_chat = function(opt, cb) {
+
+}
+
+exports.create_video = function(opt, cb) {
+
+}
+
+exports.update_video = function(opt, cb) {
+
+}
+
+exports.delete_video = function(opt, cb) {
 
 }
 
@@ -139,4 +175,37 @@ function state_filename() {
     var state_filename = process.env['mcli-state'] || 'mcli-state.json'
     var full_filename = path.resolve(tmp_dir, state_filename)
     return full_filename
+}
+
+function xrequest(opt, cb) {
+    var request = require('request')
+    var request_debug = require('request-debug')(request)
+
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    // load last cookie
+    var state = get_state()
+    var cookie = state && state.cookie ? state.cookie : null
+
+    // send request
+    return request(opt, request_cb)
+
+    function request_cb(err, res, body) {
+        if (err) {
+            cb(err, res, body)
+            return
+        }
+
+        // remember new cookie
+        if (res.headers['set-cookie']) {
+            state = state || {}
+            state.cookie = res.headers['set-cookie']
+            set_state(state)
+        }
+
+        // invoke cb
+        cb(res, body)
+    }
 }
