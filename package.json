@@ -1,0 +1,29 @@
+{
+  "name": "mcli",
+  "version": "0.0.1",
+  "description": "miaodeli command line interface.",
+  "main": "index.js",
+  "bin": {
+    "mcli-register": "mcli-register.js",
+    "mcli-unregister": "mcli-unregister.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jianru-Lin/mcli.git"
+  },
+  "author": "Jianru Lin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Jianru-Lin/mcli/issues"
+  },
+  "homepage": "https://github.com/Jianru-Lin/mcli#readme",
+  "dependencies": {
+    "request": "^2.61.0",
+    "request-debug": "^0.2.0",
+    "vstr": "^1.0.0",
+    "yargs": "^3.21.0"
+  }
+}
