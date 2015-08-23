@@ -1,34 +1,40 @@
 {
-  "name": "mcli",
-  "version": "0.0.7",
-  "description": "miaodeli command line interface.",
-  "main": "index.js",
-  "bin": {
-    "c-user": "bin/c-user",
-    "d-user": "bin/d-user",
-    "c-session": "bin/c-session",
-    "d-session": "bin/d-session",
-    "get-state": "bin/get-state",
-    "set-state": "bin/set-state",
-    "clear-state": "bin/clear-state"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Jianru-Lin/mcli.git"
-  },
-  "author": "Jianru Lin",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Jianru-Lin/mcli/issues"
-  },
-  "homepage": "https://github.com/Jianru-Lin/mcli#readme",
-  "dependencies": {
-    "request": "^2.61.0",
-    "request-debug": "^0.2.0",
-    "vstr": "^1.0.0",
-    "yargs": "^3.21.0"
-  }
+    "name": "mcli",
+    "version": "0.0.8",
+    "description": "miaodeli command line interface.",
+    "main": "index.js",
+    "bin": {
+        "c-session": "bin/c-session",
+        "c-user": "bin/c-user",
+        "clear-state": "bin/clear-state",
+        "d-session": "bin/d-session",
+        "d-user": "bin/d-user",
+        "d-user-portrait": "bin/d-user-portrait",
+        "get-state": "bin/get-state",
+        "r-session": "bin/r-session",
+        "r-user": "bin/r-user",
+        "r-user-portrait": "bin/r-user-portrait",
+        "set-state": "bin/set-state",
+        "u-user": "bin/u-user",
+        "u-user-portrait": "bin/u-user-portrait"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Jianru-Lin/mcli.git"
+    },
+    "author": "Jianru Lin",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Jianru-Lin/mcli/issues"
+    },
+    "homepage": "https://github.com/Jianru-Lin/mcli#readme",
+    "dependencies": {
+        "request": "^2.61.0",
+        "request-debug": "^0.2.0",
+        "vstr": "^1.0.0",
+        "yargs": "^3.21.0"
+    }
 }
