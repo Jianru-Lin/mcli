@@ -124,7 +124,7 @@ exports.update_user_portrait = function(opt, cb) {
     }
     return fs.createReadStream(opt.file).pipe(xrequest(request_opt, request_cb))
 
-    function request_cb(err, res, body) {debugger
+    function request_cb(err, res, body) {
         // TODO
     }}
 
@@ -318,18 +318,28 @@ function state_filename() {
 }
 
 function xrequest(opt, cb) {
-    var request = require('request')
-    //var request_debug = require('request-debug')(request)
 
+    // check args
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
     cb = cb || function() {}
 
-    // load last cookie
-    var state = get_state()
-    var cookie = state && state.cookie ? state.cookie : null
+    // load module
+    var request = require('request')
+    //var request_debug = require('request-debug')(request)
+    var CookieJar = request.jar()._jar.constructor // hack, use the same CookieJar as the request lib
+    
+    // load last cookie from state file if exits or create an new one
+    var last_state = get_state()
+    var cookie_jar = request.jar()
+
+    if (last_state && last_state.cookie_jar) {
+        cookie_jar._jar = CookieJar.deserializeSync(last_state.cookie_jar)
+    }
 
     // send request
+    //request.defaults({jar: cookie_jar})
+    opt.jar = cookie_jar
     return request(opt, request_cb)
 
     function request_cb(err, res, body) {
@@ -338,12 +348,12 @@ function xrequest(opt, cb) {
             return
         }
 
-        // remember new cookie
-        if (res.headers['set-cookie']) {
-            state = state || {}
-            state.cookie = res.headers['set-cookie']
-            set_state(state)
+        // save state to save cookie_jar
+        if (!last_state) {
+            last_state = {}
         }
+        last_state.cookie_jar = cookie_jar._jar.serializeSync() // hack, break the request lib wrapper
+        set_state(last_state)
 
         // DEBUG: print all the information
         console.log(res.statusCode)
