@@ -319,7 +319,7 @@ function state_filename() {
 
 function xrequest(opt, cb) {
     var request = require('request')
-    var request_debug = require('request-debug')(request)
+    //var request_debug = require('request-debug')(request)
 
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
@@ -343,6 +343,26 @@ function xrequest(opt, cb) {
             state = state || {}
             state.cookie = res.headers['set-cookie']
             set_state(state)
+        }
+
+        // DEBUG: print all the information
+        console.log(res.statusCode)
+        for (var name in res.headers) {
+            console.log(name + ': ' + res.headers[name])
+        }
+        console.log('')
+        if (/application\/json/.test(res.headers['content-type'])) {
+            var o = body
+            if (typeof body === 'string') {
+                o = JSON.parse(o)
+            }
+            console.log(JSON.stringify(o, null, 4))
+        }
+        else if (Buffer.isBuffer(body)) {
+            console.log(Buffer.toString('hex'))
+        }
+        else {
+            console.log(body)
         }
 
         // invoke cb
