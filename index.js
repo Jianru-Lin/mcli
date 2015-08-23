@@ -1,4 +1,5 @@
 var assert = require('assert')
+var fs = require('fs')
 var vstr = require('vstr')
 
 var base_url = 'http://tv.miaodeli.com/couchdb/'
@@ -7,8 +8,6 @@ var base_url = 'http://tv.miaodeli.com/couchdb/'
 // - error
 // - result
 
-// 创建一个新用户
-// 注意：完成此操作后并不会自动登录
 exports.create_user = function(opt, cb) {
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
@@ -86,7 +85,6 @@ exports.retrive_user = function(opt, cb) {
     }
 }
 
-// 删除指定用户
 exports.delete_user = function(opt, cb) {
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
@@ -108,7 +106,40 @@ exports.delete_user = function(opt, cb) {
     }
 }
 
-// 登录
+exports.create_user_portrait = function(opt, cb) {
+
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    assert(typeof opt.name === 'string', 'invalid argument: opt.name')
+    assert(typeof opt.file === 'string', 'invalid argument: opt.file')
+    assert(typeof opt.rev === 'string', 'invalid argument: opt.rev')
+    assert(typeof /\.jpg$/i.test(opt.file), 'invalid argument: opt.file')
+
+    var url = vstr(base_url + '_users/org.couchdb.user:${name|uricom}/portrait.jpg?rev=${rev|uricom}', opt)
+    var request_opt = {
+        url: url,
+        method: 'PUT'
+    }
+    return fs.createReadStream(opt.file).pipe(xrequest(request_opt, request_cb))
+
+    function request_cb(err, res, body) {debugger
+        // TODO
+    }}
+
+exports.update_user_portrait = function(opt, cb) {
+    
+}
+
+exports.retrive_user_portrait = function(opt, cb) {
+    
+}
+
+exports.delete_user_portrait = function(opt, cb) {
+    
+}
+
 exports.create_session = function(opt, cb) {
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')

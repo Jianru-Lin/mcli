@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+
+var m = require('../index')
+var fs = require('fs')
+var vstr = require('vstr')
+var argv = require('yargs').usage('Usage: c-user -n <name> -f <file> -r <doc_rev>')
+                           .option('name', {alias: 'n', demand: true, type: 'string'})
+                           .option('file', {alias: 'f', demand: true, type: 'string'})
+                           .option('rev', {alias: 'r', demand: true, type: 'string'})
+                           .argv
+
+
+if (!/\.jpg$/i.test(argv.file)) {
+    console.log('file name must end with .jpg')
+}
+else if (!fs.existsSync(argv.file)) {
+    console.log('file not found: ' + argv.file)
+}
+else {
+    var opt = {
+        name: argv.name,
+        file: argv.file,
+        rev: argv.rev
+    }
+    m.create_user_portrait(opt)
+}
