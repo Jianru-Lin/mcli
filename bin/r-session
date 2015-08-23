@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var m = require('../index')
-var argv = require('yargs').usage('Usage: mcli-logout')
+var argv = require('yargs').usage('Usage: r-session')
                            .argv
 
-m.logout()
+m.retrive_session()

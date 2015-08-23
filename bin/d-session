@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var m = require('../index')
-var argv = require('yargs').usage('Usage: mcli-session')
+var argv = require('yargs').usage('Usage: d-session')
                            .argv
 
-m.session()
+m.delete_session()

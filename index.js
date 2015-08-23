@@ -7,9 +7,9 @@ var base_url = 'http://tv.miaodeli.com/couchdb/'
 // - error
 // - result
 
-// 注册一个新用户
+// 创建一个新用户
 // 注意：完成此操作后并不会自动登录
-exports.register = function(opt, cb) {
+exports.create_user = function(opt, cb) {
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
     cb = cb || function() {}
@@ -37,8 +37,36 @@ exports.register = function(opt, cb) {
     }
 }
 
-// 反注册当前用户（需要先登录）
-exports.unregister = function(opt, cb) {
+exports.update_user = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    assert(typeof opt.name === 'string', 'invalid argument: opt.name')
+    assert(typeof opt.password === 'string', 'invalid argument: opt.password')
+    assert(typeof opt.rev === 'string', 'invalid argument: opt.rev')
+
+    var url = vstr(base_url + '_users/org.couchdb.user:${name|uricom}?rev=${rev|uricom}', opt)
+    var body = {
+        name: opt.name,
+        password: opt.password,
+        roles: [],
+        type: 'user'
+    }
+    var request_opt = {
+        url: url,
+        method: 'PUT',
+        json: true,
+        body: body
+    }
+    return xrequest(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }
+}
+
+exports.retrive_user = function(opt, cb) {
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
     cb = cb || function() {}
@@ -46,6 +74,28 @@ exports.unregister = function(opt, cb) {
     assert(typeof opt.name === 'string', 'invalid argument: opt.name')
 
     var url = vstr(base_url + '_users/org.couchdb.user:${name|uricom}', opt)
+    var request_opt = {
+        url: url,
+        method: 'GET',
+        json: true
+    }
+    return xrequest(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }
+}
+
+// 删除指定用户
+exports.delete_user = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    assert(typeof opt.name === 'string', 'invalid argument: opt.name')
+    assert(typeof opt.rev === 'string', 'invalid argument: opt.rev')
+
+    var url = vstr(base_url + '_users/org.couchdb.user:${name|uricom}?rev=${rev|uricom}', opt)
     var request_opt = {
         url: url,
         method: 'DELETE',
@@ -58,13 +108,8 @@ exports.unregister = function(opt, cb) {
     }
 }
 
-// 修改当前用户密码（需要先登录）
-exports.change_password = function(opt, cb) {
-
-}
-
 // 登录
-exports.login = function(opt, cb) {
+exports.create_session = function(opt, cb) {
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
     cb = cb || function() {}
@@ -90,7 +135,7 @@ exports.login = function(opt, cb) {
     }
 }
 
-exports.logout = function(opt, cb) {
+exports.delete_session = function(opt, cb) {
     // ignore opt
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
     cb = cb || function() {}
@@ -108,7 +153,7 @@ exports.logout = function(opt, cb) {
     }
 }
 
-exports.session = function(opt, cb) {
+exports.retrive_session = function(opt, cb) {
     // ignore opt
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
     cb = cb || function() {}

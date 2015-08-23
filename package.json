@@ -4,12 +4,13 @@
   "description": "miaodeli command line interface.",
   "main": "index.js",
   "bin": {
-    "mcli-register": "bin/mcli-register",
-    "mcli-unregister": "bin/mcli-unregister",
-    "mcli-login": "bin/mcli-login",
-    "mcli-get-state": "bin/mcli-get-state",
-    "mcli-set-state": "bin/mcli-set-state",
-    "mcli-clear-state": "bin/mcli-clear-state"
+    "c-user": "bin/c-user",
+    "d-user": "bin/d-user",
+    "c-session": "bin/c-session",
+    "d-session": "bin/d-session",
+    "get-state": "bin/get-state",
+    "set-state": "bin/set-state",
+    "clear-state": "bin/clear-state"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
