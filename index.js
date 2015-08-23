@@ -149,6 +149,24 @@ exports.retrive_user_portrait = function(opt, cb) {
 }
 
 exports.delete_user_portrait = function(opt, cb) {
+
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    assert(typeof opt.name === 'string', 'invalid argument: opt.name')
+    assert(typeof opt.rev === 'string', 'invalid argument: opt.rev')
+
+    var url = vstr(base_url + '_users/org.couchdb.user:${name|uricom}/portrait.jpg?rev=${rev|uricom}', opt)
+    var request_opt = {
+        url: url,
+        method: 'DELETE'
+    }
+    return xrequest(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }
     
 }
 
