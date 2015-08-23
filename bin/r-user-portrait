@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+var m = require('../index')
+var fs = require('fs')
+var vstr = require('vstr')
+var argv = require('yargs').usage('Usage: r-user-portrait -n <name>')
+                           .option('name', {alias: 'n', demand: true, type: 'string'})
+                           .argv
+
+
+var opt = {
+    name: argv.name
+}
+m.retrive_user_portrait(opt)

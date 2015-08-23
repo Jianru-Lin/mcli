@@ -3,7 +3,7 @@
 var m = require('../index')
 var fs = require('fs')
 var vstr = require('vstr')
-var argv = require('yargs').usage('Usage: c-user -n <name> -f <file> -r <doc_rev>')
+var argv = require('yargs').usage('Usage: u-user-portrait -n <name> -f <file> -r <doc_rev>')
                            .option('name', {alias: 'n', demand: true, type: 'string'})
                            .option('file', {alias: 'f', demand: true, type: 'string'})
                            .option('rev', {alias: 'r', demand: true, type: 'string'})

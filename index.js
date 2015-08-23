@@ -106,7 +106,7 @@ exports.delete_user = function(opt, cb) {
     }
 }
 
-exports.create_user_portrait = function(opt, cb) {
+exports.update_user_portrait = function(opt, cb) {
 
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
@@ -128,12 +128,24 @@ exports.create_user_portrait = function(opt, cb) {
         // TODO
     }}
 
-exports.update_user_portrait = function(opt, cb) {
-    
-}
-
 exports.retrive_user_portrait = function(opt, cb) {
-    
+
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    assert(typeof opt.name === 'string', 'invalid argument: opt.name')
+
+    var url = vstr(base_url + '_users/org.couchdb.user:${name|uricom}/portrait.jpg', opt)
+    var request_opt = {
+        url: url,
+        method: 'GET'
+    }
+    return xrequest(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }
 }
 
 exports.delete_user_portrait = function(opt, cb) {
