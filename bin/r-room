@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+
+var m = require('../index')
+var vstr = require('vstr')
+var argv = require('yargs').usage('Usage: r-room -i <id>')
+                           .option('id', {alias: 'i', demand: true, type: 'string'})
+                           .argv
+
+var opt = {
+    id: argv.id
+}
+m.retrive_room(opt)

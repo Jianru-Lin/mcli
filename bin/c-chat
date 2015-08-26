@@ -1,0 +1,109 @@
+#!/usr/bin/env node
+
+var m = require('../index')
+var url = require('url')
+
+var usage = 'Usage: c-chat -c <creator> -p [yes|no] -d /room/<room-id>/<channel-id>[/<user-name>] -t <content-type> -v <content> [-f <file>]' + '\n' +
+            '       c-chat -c <creator> -p [yes|no] -d /user/<user-name> -t <content-type> -v <content> [-f <file>] [-m <mentions>]' +
+            '' + '\n' +
+            'Examples:' + '\n' +
+            '       c-chat -c john -p yes -d /user/lucy -m "james, mark, bob" -t text/plain -v "blablabla" -f /path/to/picture.jpg'
+
+var argv = require('yargs').usage(usage)
+                           .option('creator', {alias: 'c', demand: true, type: 'string'})
+                           .option('private', {alias: 'p', demand: true, type: 'string'})
+                           .choices('p', ['yes', 'no'])
+                           .option('destination', {alias: 'd', demand: true, type: 'string'})
+                           .option('content-type', {alias: 't', demand: true, type: 'string'})
+                           .option('content', {alias: 'v', demand: true, type: 'string'})
+                           .option('file', {alias: 'f', demand: false, type: 'string'})
+                           .option('mentions', {alias: 'm', demand: false, type: 'string'})
+                           .wrap(null)
+                           .argv
+
+var opt = {
+    creator: argv.creator,
+    private: argv.private === 'yes' ? true : false,
+    dest: {
+        room_id: null,
+        channel_id: null,
+        user: null        
+    },
+    content_type: argv['content-type'],
+    content: argv.content,
+    mentions: null
+}
+
+set_dest()
+set_mentions()
+
+m.create_chat(opt)
+
+// TODO file attachment upload is not implemented
+
+function set_dest() {
+    var o = url.parse(argv.d)
+    var p = o.pathname
+
+    var room_prefix = '/room/'
+    var user_prefix = '/user/'
+
+    if (p.indexOf(room_prefix) === 0) {
+        var text = p.substring(room_prefix.length)
+        var parts = text.split('/')
+        if (parts.length !== 2 && parts.length !== 3) {
+            console.error('Invalid destination value')
+            process.exit(1)
+        }
+        var room_id = parts[0]
+        var channel_id = parts[1]
+        var user = parts[2]
+
+        // check
+        if (!room_id || !channel_id) {
+            console.error('Invalid destination value')
+            process.exit(1)            
+        }
+
+        // set
+        opt.dest.room_id = room_id
+        opt.dest.channel_id = channel_id
+        if (user) {
+            opt.dest.user = user
+        }debugger
+    }
+    else if (p.indexOf(user_prefix) === 0) {
+        var text = p.substring(user_prefix.length)
+        var user = text
+        // check
+        if (!user) {
+            console.error('Invalid destination value')
+            process.exit(1)            
+        }
+        // set
+        opt.dest.user = user
+    }
+    else {
+        console.error('Invalid destination value')
+        process.exit(1)
+    }
+}
+
+function set_mentions() {
+    // seperated by comma
+    if (argv.mentions) {
+        var parts = argv.mentions.split(',').map(trim).filter(not_empty)
+        if (parts.length > 0) {
+            // set
+            opt.mentions = parts
+        }
+    }
+
+    function trim(item) {
+        return item.trim()
+    }
+
+    function not_empty(item) {
+        return item && true
+    }
+}

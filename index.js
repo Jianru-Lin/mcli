@@ -233,7 +233,60 @@ exports.retrive_session = function(opt, cb) {
 }
 
 exports.create_room = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
 
+    assert(typeof opt.creator === 'string', 'invalid argument: opt.creator')
+    assert(typeof opt.title === 'string', 'invalid argument: opt.title')
+    assert(typeof opt.intro === 'string', 'invalid argument: opt.intro')
+
+    var url = vstr(base_url + 'room/', opt)
+    var body = {
+        creator: opt.creator,
+        channels: [{
+            channel_id: 0,
+            path: [],
+            title: opt.title,
+            intro: opt.intro,
+            videos: [],
+            role_table: {
+                // 'user_a': 'manager',
+                // 'user_b': 'vip'
+            }
+        }]
+    }
+    var request_opt = {
+        url: url,
+        method: 'POST',
+        json: true,
+        body: body
+    }
+    return xrequest(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }
+}
+
+exports.retrive_room = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    assert(typeof opt.id === 'string', 'invalid argument: opt.id')
+
+    var url = vstr(base_url + 'room/${id|uricom}', opt)
+    var request_opt = {
+        url: url,
+        method: 'GET',
+        json: true
+    }
+    return xrequest(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }
 }
 
 exports.update_room = function(opt, cb) {
@@ -241,11 +294,88 @@ exports.update_room = function(opt, cb) {
 }
 
 exports.delete_room = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
 
+    assert(typeof opt.id === 'string', 'invalid argument: opt.id')
+    assert(typeof opt.rev === 'string', 'invalid argument: opt.rev')
+
+    var url = vstr(base_url + 'room/${id|uricom}?rev=${rev|uricom}', opt)
+    var request_opt = {
+        url: url,
+        method: 'DELETE',
+        json: true
+    }
+    return xrequest(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }
 }
 
 exports.create_chat = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
 
+    // creator
+    assert_nonempty_string(opt.creator, 'invalid argument: opt.creator')
+
+    // private
+    assert_bool(opt.private, 'invalid argument: opt.private')
+
+    // mentions
+    assert(is_null(opt.mentions) || is_array_of_type(opt.mentions, 'string'), 'invalid argument: opt.mentions')
+
+    // content
+    assert(typeof opt.content === 'string', 'invalid argument: opt.content')
+
+    // content_type
+    assert(typeof opt.content_type === 'string', 'invalid argument: opt.content_type')
+
+    // dest
+    // case a: room_id + channel_id
+    // case b: room_id + channel_id + user
+    // case c: user
+    assert_object(opt.dest, 'invalid argument: opt.dest')
+    var room_id = opt.dest.room_id
+    var channel_id = opt.dest.channel_id
+    var user = opt.dest.user
+    var case_a = is_nonempty_string(room_id) && is_nonempty_string(channel_id) && is_null(user)
+    var case_b = is_nonempty_string(room_id) && is_nonempty_string(channel_id) && is_nonempty_string(user)
+    var case_c = is_null(room_id) && is_null(channel_id) && is_nonempty_string(user)
+    assert(case_a || case_b || case_c, 'invalid argument: opt.dest')
+
+    // ok, prepare my request
+
+    var url = base_url + 'chat/'
+
+    var body = {
+        creator: opt.creator,
+        private: opt.private,
+        dest: opt.dest,
+        mentions: opt.mentions,
+        content: opt.content,
+        content_type: opt.content_type,
+        room_id: opt.room_id,
+        channel_id: opt.channel_id
+    }
+
+    var request_opt = {
+        url: url,
+        method: 'POST',
+        json: true,
+        body: body
+    }
+
+    // send request
+
+    return xrequest(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }
 }
 
 exports.update_chat = function(opt, cb) {
@@ -378,4 +508,46 @@ function xrequest(opt, cb) {
         // invoke cb
         cb(res, body)
     }
+}
+
+function is_array_of_type(o, type) {
+    return Array.isArray(o) && o.every(function(item) {
+        return typeof item === type
+    })
+}
+
+function is_string(v) {
+    return typeof v === 'string'
+}
+
+function is_nonempty_string(v) {
+    return is_string(v) && v.length > 0
+}
+
+function is_object(v) {
+    return typeof v === 'object' && v !== null
+}
+
+function is_null(v) {
+    return v === null
+}
+
+function is_bool(v) {
+    return typeof v === 'boolean'
+}
+
+function assert_nonempty_string(v, t) {
+    assert(is_nonempty_string(v), t)
+}
+
+function assert_string(v, t) {
+    assert(is_string(v), t)
+}
+
+function assert_object(v, t) {
+    assert(is_object(v), t)
+}
+
+function assert_bool(v, t) {
+    assert(is_bool(v), t)
 }
