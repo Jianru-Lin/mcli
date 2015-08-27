@@ -1,6 +1,6 @@
 {
     "name": "mcli",
-    "version": "0.0.19",
+    "version": "0.0.21",
     "description": "miaodeli command line interface.",
     "main": "index.js",
     "bin": {
@@ -9,17 +9,15 @@
         "c-room-channel": "bin/c-room-channel",
         "c-session": "bin/c-session",
         "c-user": "bin/c-user",
-        "clear-state": "bin/clear-state",
         "d-room": "bin/d-room",
         "d-session": "bin/d-session",
         "d-user": "bin/d-user",
         "d-user-portrait": "bin/d-user-portrait",
-        "get-state": "bin/get-state",
         "r-room": "bin/r-room",
         "r-session": "bin/r-session",
         "r-user": "bin/r-user",
         "r-user-portrait": "bin/r-user-portrait",
-        "set-state": "bin/set-state",
+        "state": "bin/state",
         "u-user": "bin/u-user",
         "u-user-portrait": "bin/u-user-portrait"
     },

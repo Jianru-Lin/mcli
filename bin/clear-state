@@ -1,9 +1,0 @@
-#!/usr/bin/env node
-
-var m = require('../index')
-var vstr = require('vstr')
-var argv = require('yargs').usage('Usage: mcli-clear-state')
-                           .argv
-
-m.clear_state()
-console.log('done.')

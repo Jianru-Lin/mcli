@@ -5,12 +5,10 @@ var vstr = require('vstr')
 var argv = require('yargs').usage('Usage: u-user -n <name> -p <password>')
                            .option('name', {alias: 'n', demand: true, type: 'string'})
                            .option('password', {alias: 'p', demand: true, type: 'string'})
-                           .option('rev', {alias: 'r', demand: true, type: 'string'})
                            .argv
 
 var opt = {
     name: argv.name,
-    password: argv.password,
-    rev: argv.rev
+    password: argv.password
 }
 m.update_user(opt, require('../cmd_cb'))

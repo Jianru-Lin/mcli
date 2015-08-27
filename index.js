@@ -40,22 +40,33 @@ exports.update_user = function(opt, cb) {
 
     assert(typeof opt.name === 'string', 'invalid argument: opt.name')
     assert(typeof opt.password === 'string', 'invalid argument: opt.password')
-    assert(typeof opt.rev === 'string', 'invalid argument: opt.rev')
 
-    var url = vstr(base_url + '_users/org.couchdb.user:${name|uricom}?rev=${rev|uricom}', opt)
-    var body = {
-        name: opt.name,
-        password: opt.password,
-        roles: [],
-        type: 'user'
-    }
-    var request_opt = {
-        url: url,
-        method: 'PUT',
-        json: true,
-        body: body
-    }
-    return xrequest(request_opt, request_cb_factory(cb))
+    // retrive user first
+    exports.retrive_user({name: opt.name}, function(err, result) {
+        if (err) {
+            cb(err, null)
+            return
+        }
+        else if (result.error) {
+            cb(null, result)
+            return
+        }
+
+        var url = vstr(base_url + '_users/${_id|uricom}?rev=${_rev|uricom}', result)
+        var body = {
+            name: opt.name,
+            password: opt.password,
+            roles: [],
+            type: 'user'
+        }
+        var request_opt = {
+            url: url,
+            method: 'PUT',
+            json: true,
+            body: body
+        }
+        return xrequest(request_opt, request_cb_factory(cb))
+    })
 }
 
 exports.retrive_user = function(opt, cb) {

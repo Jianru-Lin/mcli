@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+
+var m = require('../index')
+var vstr = require('vstr')
+var yargs = require('yargs').usage('Usage: state <command> [options]')
+                           .command('get', 'get current state')
+                           .command('set', 'set current state')
+                           .command('clear', 'clear current state')
+                           .example('state get')
+                           .example('state set -v <json-value>')
+                           .example('state clear')
+                           .help('h').alias('h', 'help')
+
+var argv = yargs.argv
+
+var command = argv._[0]
+switch(command) {
+    case 'get':
+        get_state()
+        break
+    case 'set':
+        set_state()
+        break
+    case 'clear':
+        clear_state()
+        break
+    default:
+        yargs.showHelp()
+}
+
+function get_state() {
+    var filename = m.state_filename()
+    console.log('read state from file: ' + filename)
+
+    var state = m.get_state()
+    if (!state) {
+        console.log('not found.')
+    }
+    else {
+        console.log(JSON.stringify(state, null, 4))
+    }
+}
+
+function set_state() {
+    var argv = yargs.reset().usage('Usage: state set -v <json-value>')
+                            .option('value', {alias: 'v', demand: true, type: 'string'})
+                            .argv
+
+    var filename = m.state_filename()
+    console.log('write state to file: ' + filename)
+
+    try {
+        var state = JSON.parse(argv.v)
+        m.set_state(state)
+        console.log('done.')
+    }
+    catch (err) {
+        console.log(err.toString())
+    }
+}
+
+function clear_state() {
+    var filename = m.state_filename()
+    console.log('remove state file: ' + filename)
+
+    m.clear_state()
+    console.log('done.')
+}
