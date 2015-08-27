@@ -2,6 +2,8 @@
 
 var m = require('../index')
 var url = require('url')
+var fs = require('fs')
+var path = require('path')
 
 var usage = 'Usage: c-chat -c <creator> -p [yes|no] -d /room/<room-id>/<channel-id>[/<user-name>] -t <content-type> -v <content> [-f <file>]' + '\n' +
             '       c-chat -c <creator> -p [yes|no] -d /user/<user-name> -t <content-type> -v <content> [-f <file>] [-m <mentions>]' +
@@ -31,11 +33,25 @@ var opt = {
     },
     content_type: argv['content-type'],
     content: argv.content,
-    mentions: null
+    mentions: null,
+    file: null
 }
 
 set_dest()
 set_mentions()
+
+// check file exits or not if provided
+if (argv.file) {
+    var file = path.resolve(argv.file)
+
+    if (!fs.existsSync(argv.file)) {
+        console.error('file not found: ' + file)
+        process.exit(1)
+    }
+    else {
+        opt.file = file
+    }
+}
 
 m.create_chat(opt)
 

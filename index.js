@@ -1,5 +1,6 @@
 var assert = require('assert')
 var fs = require('fs')
+var path = require('path')
 var vstr = require('vstr')
 
 var base_url = 'http://tv.miaodeli.com/couchdb/'
@@ -245,7 +246,7 @@ exports.create_room = function(opt, cb) {
     var body = {
         creator: opt.creator,
         channels: [{
-            channel_id: 0,
+            channel_id: generate_uuid(),
             path: [],
             title: opt.title,
             intro: opt.intro,
@@ -314,6 +315,57 @@ exports.delete_room = function(opt, cb) {
     }
 }
 
+exports.create_channel = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    assert(typeof opt.room_id === 'string', 'invalid argument: opt.room_id')
+    assert(typeof opt.path === 'string', 'invalid argument: opt.path')
+    assert(typeof opt.creator === 'string', 'invalid argument: opt.creator')
+    assert(typeof opt.title === 'string', 'invalid argument: opt.title')
+    assert(typeof opt.intro === 'string', 'invalid argument: opt.intro')
+
+    var url = vstr(base_url + 'room/', opt)
+    var body = {
+        creator: opt.creator,
+        channels: [{
+            channel_id: 0,
+            path: [],
+            title: opt.title,
+            intro: opt.intro,
+            videos: [],
+            role_table: {
+                // 'user_a': 'manager',
+                // 'user_b': 'vip'
+            }
+        }]
+    }
+    var request_opt = {
+        url: url,
+        method: 'POST',
+        json: true,
+        body: body
+    }
+    return xrequest(request_opt, request_cb)
+
+    function request_cb(err, res, body) {
+        // TODO
+    }    
+}
+
+exports.retrive_channel = function(opt, cb) {
+    
+}
+
+exports.update_channel = function(opt, cb) {
+    
+}
+
+exports.delete_channel = function(opt, cb) {
+    
+}
+
 exports.create_chat = function(opt, cb) {
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
@@ -347,9 +399,10 @@ exports.create_chat = function(opt, cb) {
     var case_c = is_null(room_id) && is_null(channel_id) && is_nonempty_string(user)
     assert(case_a || case_b || case_c, 'invalid argument: opt.dest')
 
-    // ok, prepare my request
+    // file
+    assert(is_null(opt.file) || is_nonempty_string(opt.file), 'invalid argument: opt.file')
 
-    var url = base_url + 'chat/'
+    // ok, prepare my request
 
     var body = {
         creator: opt.creator,
@@ -362,11 +415,38 @@ exports.create_chat = function(opt, cb) {
         channel_id: opt.channel_id
     }
 
-    var request_opt = {
-        url: url,
-        method: 'POST',
-        json: true,
-        body: body
+    if (opt.file) {
+        var new_filename = generate_uuid() + path.extname(opt.file)
+        // var new_filename = path.basename(opt.file)
+        body._attachments = {}
+        body._attachments[new_filename] = {
+            follows: true,
+            content_type: what_mime(opt.file),
+            length: fs.lstatSync(opt.file).size // EXCEPTION Maybe
+        }
+
+        var url = base_url + 'chat/' + generate_uuid()
+        var request_opt = {
+            url: url,
+            method: 'PUT',
+            headers:{},
+            multipart: [{
+                'Content-Type': 'application/json',
+                body: JSON.stringify(body)
+            }, {
+                'Content-Type': what_mime(opt.file),
+                body: fs.createReadStream(opt.file)
+            }]
+        }
+    }
+    else {
+        var url = base_url + 'chat/'
+        var request_opt = {
+            url: url,
+            method: 'POST',
+            json: true,
+            body: body
+        }        
     }
 
     // send request
@@ -551,3 +631,18 @@ function assert_object(v, t) {
 function assert_bool(v, t) {
     assert(is_bool(v), t)
 }
+
+function what_mime(filename) {
+    assert_nonempty_string(filename)
+    var mime = require('mime')
+    return mime.lookup(filename)
+}
+
+function generate_uuid() {
+    var uuid = require('uuid')
+    // random based version
+    return uuid.v4().replace(/-/g, '')
+}
+
+exports.what_mime = what_mime
+exports.generate_uuid = generate_uuid
