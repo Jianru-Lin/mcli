@@ -1,11 +1,12 @@
 {
     "name": "mcli",
-    "version": "0.0.15",
+    "version": "0.0.16",
     "description": "miaodeli command line interface.",
     "main": "index.js",
     "bin": {
         "c-chat": "bin/c-chat",
         "c-room": "bin/c-room",
+        "c-room-channel": "bin/c-room-channel",
         "c-session": "bin/c-session",
         "c-user": "bin/c-user",
         "clear-state": "bin/clear-state",

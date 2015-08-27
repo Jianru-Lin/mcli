@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+
+var m = require('../index')
+
+var argv = require('yargs').usage('Usage: c-room-channel -r <room-id> [-p <parent-channel-id>] -c <creator> -t <title> -i <intro>')
+                           .option('room-id', {alias: 'r', demand: true, type: 'string'})
+                           .option('parent-channel-id', {alias: 'p', demand: false, type: 'string'})
+                           .option('creator', {alias: 'c', demand: true, type: 'string'})
+                           .option('title', {alias: 't', demand: true, type: 'string'})
+                           .option('intro', {alias: 'i', demand: true, type: 'string'})
+                           .wrap(null)
+                           .argv
+
+var parent_channel_id = null
+
+if (argv['parent-channel-id']) {
+    parent_channel_id = parseInt(argv['parent-channel-id'])
+    if (Number.isNaN(parent_channel_id)) {
+        console.error('Invalid parent-channel-id')
+        process.exit(1)
+    }
+}
+
+var opt = {
+    room_id: argv['room-id'],
+    parent_channel_id: parent_channel_id,
+    creator: argv.creator,
+    title: argv.title,
+    intro: argv.intro
+}
+m.create_channel(opt)

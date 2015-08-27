@@ -242,19 +242,17 @@ exports.create_room = function(opt, cb) {
     assert(typeof opt.title === 'string', 'invalid argument: opt.title')
     assert(typeof opt.intro === 'string', 'invalid argument: opt.intro')
 
-    var url = vstr(base_url + 'room/', opt)
+    var url = base_url + 'room/'
     var body = {
         creator: opt.creator,
+        next_channel_id: 1,
         channels: [{
-            channel_id: generate_uuid(),
-            path: [],
+            channel_id: 0,
+            parent_channel_id: null,
+            creator: opt.creator,
             title: opt.title,
             intro: opt.intro,
-            videos: [],
-            role_table: {
-                // 'user_a': 'manager',
-                // 'user_b': 'vip'
-            }
+            videos: []
         }]
     }
     var request_opt = {
@@ -286,7 +284,7 @@ exports.retrive_room = function(opt, cb) {
     return xrequest(request_opt, request_cb)
 
     function request_cb(err, res, body) {
-        // TODO
+        cb(err, body)
     }
 }
 
@@ -321,37 +319,49 @@ exports.create_channel = function(opt, cb) {
     cb = cb || function() {}
 
     assert(typeof opt.room_id === 'string', 'invalid argument: opt.room_id')
-    assert(typeof opt.path === 'string', 'invalid argument: opt.path')
+    assert(is_null(opt.parent_channel_id) || is_number(opt.parent_channel_id), 'invalid argument: opt.parent_channel_id')
     assert(typeof opt.creator === 'string', 'invalid argument: opt.creator')
     assert(typeof opt.title === 'string', 'invalid argument: opt.title')
     assert(typeof opt.intro === 'string', 'invalid argument: opt.intro')
 
-    var url = vstr(base_url + 'room/', opt)
-    var body = {
-        creator: opt.creator,
-        channels: [{
-            channel_id: 0,
-            path: [],
+    // retrive room info first
+    exports.retrive_room({id: opt.room_id}, function(err, result) {
+        // failed?
+        if (err || result.error) {
+            cb('fail to retrive room info', null)
+            return
+        }
+
+        // ok, we can construct what we want to update now
+        var room = result
+        var new_channel = {
+            creator: opt.creator,
+            channel_id: room.next_channel_id,
+            parent_channel_id: opt.parent_channel_id,
             title: opt.title,
             intro: opt.intro,
-            videos: [],
-            role_table: {
-                // 'user_a': 'manager',
-                // 'user_b': 'vip'
-            }
-        }]
-    }
-    var request_opt = {
-        url: url,
-        method: 'POST',
-        json: true,
-        body: body
-    }
-    return xrequest(request_opt, request_cb)
+            videos: []
+        }
+        room.next_channel_id += 1
+        room.channels = room.channels || []
+        room.channels.push(new_channel)
 
-    function request_cb(err, res, body) {
-        // TODO
-    }    
+        // well, it's time to apply our modify
+        var url = vstr(base_url + 'room/${_id|uricom}?rev=${_rev|uricom}', room)
+        var request_opt = {
+            url: url,
+            method: 'PUT',
+            json: true,
+            body: room
+        }
+        
+        xrequest(request_opt, request_cb)
+
+        function request_cb(err, res, body) {
+            // TODO
+        }    
+    })
+
 }
 
 exports.retrive_channel = function(opt, cb) {
@@ -586,7 +596,7 @@ function xrequest(opt, cb) {
         }
 
         // invoke cb
-        cb(res, body)
+        cb(null, res, body)
     }
 }
 
@@ -614,6 +624,14 @@ function is_null(v) {
 
 function is_bool(v) {
     return typeof v === 'boolean'
+}
+
+function is_number(v) {
+    return typeof v === 'number'
+}
+
+function assert_number(v, t) {
+    assert(is_number(v), t)
 }
 
 function assert_nonempty_string(v, t) {
