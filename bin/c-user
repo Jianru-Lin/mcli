@@ -11,4 +11,4 @@ var opt = {
     name: argv.name,
     password: argv.password
 }
-m.create_user(opt)
+m.create_user(opt, require('../cmd_cb'))

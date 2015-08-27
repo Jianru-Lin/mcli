@@ -11,4 +11,4 @@ var opt = {
     id: argv.id,
     rev: argv.rev
 }
-m.delete_room(opt)
+m.delete_room(opt, require('../cmd_cb'))

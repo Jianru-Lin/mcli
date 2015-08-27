@@ -30,11 +30,7 @@ exports.create_user = function(opt, cb) {
         json: true,
         body: body
     }
-    return xrequest(request_opt, request_cb)
-
-    function request_cb(err, res, body) {
-        // TODO
-    }
+    return xrequest(request_opt, request_cb_factory(cb))
 }
 
 exports.update_user = function(opt, cb) {
@@ -59,11 +55,7 @@ exports.update_user = function(opt, cb) {
         json: true,
         body: body
     }
-    return xrequest(request_opt, request_cb)
-
-    function request_cb(err, res, body) {
-        // TODO
-    }
+    return xrequest(request_opt, request_cb_factory(cb))
 }
 
 exports.retrive_user = function(opt, cb) {
@@ -79,11 +71,7 @@ exports.retrive_user = function(opt, cb) {
         method: 'GET',
         json: true
     }
-    return xrequest(request_opt, request_cb)
-
-    function request_cb(err, res, body) {
-        // TODO
-    }
+    return xrequest(request_opt, request_cb_factory(cb))
 }
 
 exports.delete_user = function(opt, cb) {
@@ -92,19 +80,27 @@ exports.delete_user = function(opt, cb) {
     cb = cb || function() {}
 
     assert(typeof opt.name === 'string', 'invalid argument: opt.name')
-    assert(typeof opt.rev === 'string', 'invalid argument: opt.rev')
 
-    var url = vstr(base_url + '_users/org.couchdb.user:${name|uricom}?rev=${rev|uricom}', opt)
-    var request_opt = {
-        url: url,
-        method: 'DELETE',
-        json: true
-    }
-    return xrequest(request_opt, request_cb)
+    // retrive user first
+    exports.retrive_user({name: opt.name}, function(err, result) {
+        if (err) {
+            cb(err, null)
+            return
+        }
+        else if (result.error) {
+            cb(null, result)
+            return
+        }
 
-    function request_cb(err, res, body) {
-        // TODO
-    }
+        var user = result
+        var url = vstr(base_url + '_users/${_id|uricom}?rev=${_rev|uricom}', user)
+        var request_opt = {
+            url: url,
+            method: 'DELETE',
+            json: true
+        }
+        return xrequest(request_opt, request_cb_factory(cb))
+    })
 }
 
 exports.update_user_portrait = function(opt, cb) {
@@ -123,11 +119,8 @@ exports.update_user_portrait = function(opt, cb) {
         url: url,
         method: 'PUT'
     }
-    return fs.createReadStream(opt.file).pipe(xrequest(request_opt, request_cb))
-
-    function request_cb(err, res, body) {
-        // TODO
-    }}
+    return fs.createReadStream(opt.file).pipe(xrequest(request_opt, request_cb_factory(cb)))
+}
 
 exports.retrive_user_portrait = function(opt, cb) {
 
@@ -142,11 +135,7 @@ exports.retrive_user_portrait = function(opt, cb) {
         url: url,
         method: 'GET'
     }
-    return xrequest(request_opt, request_cb)
-
-    function request_cb(err, res, body) {
-        // TODO
-    }
+    return xrequest(request_opt, request_cb_factory(cb))
 }
 
 exports.delete_user_portrait = function(opt, cb) {
@@ -163,12 +152,7 @@ exports.delete_user_portrait = function(opt, cb) {
         url: url,
         method: 'DELETE'
     }
-    return xrequest(request_opt, request_cb)
-
-    function request_cb(err, res, body) {
-        // TODO
-    }
-    
+    return xrequest(request_opt, request_cb_factory(cb))
 }
 
 exports.create_session = function(opt, cb) {
@@ -190,11 +174,7 @@ exports.create_session = function(opt, cb) {
         json: true,
         body: body
     }
-    return xrequest(request_opt, request_cb)
-
-    function request_cb(err, res, body) {
-        // TODO
-    }
+    return xrequest(request_opt, request_cb_factory(cb))
 }
 
 exports.delete_session = function(opt, cb) {
@@ -208,11 +188,7 @@ exports.delete_session = function(opt, cb) {
         method: 'DELETE',
         json: true
     }
-    return xrequest(request_opt, request_cb)
-
-    function request_cb(err, res, body) {
-        // TODO
-    }
+    return xrequest(request_opt, request_cb_factory(cb))
 }
 
 exports.retrive_session = function(opt, cb) {
@@ -226,11 +202,7 @@ exports.retrive_session = function(opt, cb) {
         method: 'GET',
         json: true
     }
-    return xrequest(request_opt, request_cb)
-
-    function request_cb(err, res, body) {
-        // TODO
-    }
+    return xrequest(request_opt, request_cb_factory(cb))
 }
 
 exports.create_room = function(opt, cb) {
@@ -261,11 +233,7 @@ exports.create_room = function(opt, cb) {
         json: true,
         body: body
     }
-    return xrequest(request_opt, request_cb)
-
-    function request_cb(err, res, body) {
-        // TODO
-    }
+    return xrequest(request_opt, request_cb_factory(cb))
 }
 
 exports.retrive_room = function(opt, cb) {
@@ -281,11 +249,7 @@ exports.retrive_room = function(opt, cb) {
         method: 'GET',
         json: true
     }
-    return xrequest(request_opt, request_cb)
-
-    function request_cb(err, res, body) {
-        cb(err, body)
-    }
+    return xrequest(request_opt, request_cb_factory(cb))
 }
 
 exports.update_room = function(opt, cb) {
@@ -306,11 +270,7 @@ exports.delete_room = function(opt, cb) {
         method: 'DELETE',
         json: true
     }
-    return xrequest(request_opt, request_cb)
-
-    function request_cb(err, res, body) {
-        // TODO
-    }
+    return xrequest(request_opt, request_cb_factory(cb))
 }
 
 exports.create_channel = function(opt, cb) {
@@ -327,8 +287,12 @@ exports.create_channel = function(opt, cb) {
     // retrive room info first
     exports.retrive_room({id: opt.room_id}, function(err, result) {
         // failed?
-        if (err || result.error) {
-            cb('fail to retrive room info', null)
+        if (err) {
+            cb(err, null)
+            return
+        }
+        else if (result.error) {
+            cb(null, result)
             return
         }
 
@@ -355,11 +319,7 @@ exports.create_channel = function(opt, cb) {
             body: room
         }
         
-        xrequest(request_opt, request_cb)
-
-        function request_cb(err, res, body) {
-            // TODO
-        }    
+        xrequest(request_opt, request_cb_factory(cb))
     })
 
 }
@@ -461,11 +421,7 @@ exports.create_chat = function(opt, cb) {
 
     // send request
 
-    return xrequest(request_opt, request_cb)
-
-    function request_cb(err, res, body) {
-        // TODO
-    }
+    return xrequest(request_opt, request_cb_factory(cb))
 }
 
 exports.update_chat = function(opt, cb) {
@@ -575,6 +531,7 @@ function xrequest(opt, cb) {
         last_state.cookie_jar = cookie_jar._jar.serializeSync() // hack, break the request lib wrapper
         set_state(last_state)
 
+        /*
         // DEBUG: print all the information
         console.log(res.statusCode)
         for (var name in res.headers) {
@@ -594,6 +551,7 @@ function xrequest(opt, cb) {
         else {
             console.log(body)
         }
+        */
 
         // invoke cb
         cb(null, res, body)
@@ -662,5 +620,12 @@ function generate_uuid() {
     return uuid.v4().replace(/-/g, '')
 }
 
-exports.what_mime = what_mime
-exports.generate_uuid = generate_uuid
+function request_cb_factory(cb) {
+    return function (err, res, body) {
+        if (err) {
+            cb(err, null)
+            return
+        }
+        cb(null, body)
+    }
+}

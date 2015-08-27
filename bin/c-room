@@ -13,4 +13,4 @@ var opt = {
     title: argv.title,
     intro: argv.intro
 }
-m.create_room(opt)
+m.create_room(opt, require('../cmd_cb'))

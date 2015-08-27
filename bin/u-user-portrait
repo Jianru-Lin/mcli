@@ -22,5 +22,5 @@ else {
         file: argv.file,
         rev: argv.rev
     }
-    m.create_user_portrait(opt)
+    m.create_user_portrait(opt, require('../cmd_cb'))
 }

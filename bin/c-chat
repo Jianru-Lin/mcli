@@ -53,7 +53,7 @@ if (argv.file) {
     }
 }
 
-m.create_chat(opt)
+m.create_chat(opt, require('../cmd_cb'))
 
 // TODO file attachment upload is not implemented
 

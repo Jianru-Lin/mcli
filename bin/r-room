@@ -9,4 +9,4 @@ var argv = require('yargs').usage('Usage: r-room -i <id>')
 var opt = {
     id: argv.id
 }
-m.retrive_room(opt)
+m.retrive_room(opt, require('../cmd_cb'))

@@ -12,4 +12,4 @@ var opt = {
     name: argv.name,
     rev: argv.rev
 }
-m.delete_user_portrait(opt)
+m.delete_user_portrait(opt, require('../cmd_cb'))

@@ -4,4 +4,4 @@ var m = require('../index')
 var argv = require('yargs').usage('Usage: r-session')
                            .argv
 
-m.retrive_session()
+m.retrive_session(null, require('../cmd_cb'))

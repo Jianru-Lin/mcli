@@ -13,4 +13,4 @@ var opt = {
     password: argv.password,
     rev: argv.rev
 }
-m.update_user(opt)
+m.update_user(opt, require('../cmd_cb'))

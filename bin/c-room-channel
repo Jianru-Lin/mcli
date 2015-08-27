@@ -28,4 +28,5 @@ var opt = {
     title: argv.title,
     intro: argv.intro
 }
-m.create_channel(opt)
+
+m.create_channel(opt, require('../cmd_cb'))

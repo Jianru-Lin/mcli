@@ -9,4 +9,4 @@ var argv = require('yargs').usage('Usage: r-user -n <name>')
 var opt = {
     name: argv.n
 }
-m.retrive_user(opt)
+m.retrive_user(opt, require('../cmd_cb'))

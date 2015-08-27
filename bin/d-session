@@ -4,4 +4,4 @@ var m = require('../index')
 var argv = require('yargs').usage('Usage: d-session')
                            .argv
 
-m.delete_session()
+m.delete_session(null, require('../cmd_cb'))

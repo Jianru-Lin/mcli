@@ -11,4 +11,4 @@ var argv = require('yargs').usage('Usage: r-user-portrait -n <name>')
 var opt = {
     name: argv.name
 }
-m.retrive_user_portrait(opt)
+m.retrive_user_portrait(opt, require('../cmd_cb'))
