@@ -16,10 +16,12 @@ exports.create_user = function(opt, cb) {
 
     assert(typeof opt.name === 'string', 'invalid argument: opt.name')
     assert(typeof opt.password === 'string', 'invalid argument: opt.password')
+    assert(typeof opt.display_name === 'string', 'invalid argument: opt.display_name')
 
     var url = vstr(base_url + '_users/org.couchdb.user:${name|uricom}', opt)
     var body = {
         name: opt.name,
+        display_name: opt.display_name,
         password: opt.password,
         roles: [],
         type: 'user'
@@ -40,6 +42,7 @@ exports.update_user = function(opt, cb) {
 
     assert(typeof opt.name === 'string', 'invalid argument: opt.name')
     assert(typeof opt.password === 'string', 'invalid argument: opt.password')
+    // TODO 允许修改 display_name
 
     // retrive user first
     exports.retrive_user({name: opt.name}, function(err, result) {
@@ -122,15 +125,30 @@ exports.update_user_portrait = function(opt, cb) {
 
     assert(typeof opt.name === 'string', 'invalid argument: opt.name')
     assert(typeof opt.file === 'string', 'invalid argument: opt.file')
-    assert(typeof opt.rev === 'string', 'invalid argument: opt.rev')
     assert(typeof /\.jpg$/i.test(opt.file), 'invalid argument: opt.file')
 
-    var url = vstr(base_url + '_users/org.couchdb.user:${name|uricom}/portrait.jpg?rev=${rev|uricom}', opt)
-    var request_opt = {
-        url: url,
-        method: 'PUT'
-    }
-    return fs.createReadStream(opt.file).pipe(xrequest(request_opt, request_cb_factory(cb)))
+    // retrive user first
+    exports.retrive_user({name: opt.name}, function(err, result) {
+        // failed?
+        if (err) {
+            cb(err, null)
+            return
+        }
+        else if (result.error) {
+            cb(null, result)
+            return
+        }
+
+        var url = vstr(base_url + '_users/${_id|uricom}/portrait.jpg?rev=${_rev|uricom}', result)
+        var request_opt = {
+            url: url,
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json'
+            }
+        }
+        return fs.createReadStream(opt.file).pipe(xrequest(request_opt, request_cb_factory(cb)))
+    })
 }
 
 exports.retrive_user_portrait = function(opt, cb) {
@@ -156,14 +174,28 @@ exports.delete_user_portrait = function(opt, cb) {
     cb = cb || function() {}
 
     assert(typeof opt.name === 'string', 'invalid argument: opt.name')
-    assert(typeof opt.rev === 'string', 'invalid argument: opt.rev')
 
-    var url = vstr(base_url + '_users/org.couchdb.user:${name|uricom}/portrait.jpg?rev=${rev|uricom}', opt)
-    var request_opt = {
-        url: url,
-        method: 'DELETE'
-    }
-    return xrequest(request_opt, request_cb_factory(cb))
+    // retrive user first
+    exports.retrive_user({name: opt.name}, function(err, result) {
+        if (err) {
+            cb(err, null)
+            return
+        }
+        else if (result.error) {
+            cb(null, result)
+            return
+        }
+
+        var url = vstr(base_url + '_users/${_id|uricom}/portrait.jpg?rev=${_rev|uricom}', result)
+        var request_opt = {
+            url: url,
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json'
+            }
+        }
+        return xrequest(request_opt, request_cb_factory(cb))        
+    })
 }
 
 exports.create_session = function(opt, cb) {
@@ -273,15 +305,27 @@ exports.delete_room = function(opt, cb) {
     cb = cb || function() {}
 
     assert(typeof opt.id === 'string', 'invalid argument: opt.id')
-    assert(typeof opt.rev === 'string', 'invalid argument: opt.rev')
 
-    var url = vstr(base_url + 'room/${id|uricom}?rev=${rev|uricom}', opt)
-    var request_opt = {
-        url: url,
-        method: 'DELETE',
-        json: true
-    }
-    return xrequest(request_opt, request_cb_factory(cb))
+    // retrive room first
+    exports.retrive_room({id: opt.id}, function(err, result) {
+        // failed?
+        if (err) {
+            cb(err, null)
+            return
+        }
+        else if (result.error) {
+            cb(null, result)
+            return
+        }
+
+        var url = vstr(base_url + 'room/${_id|uricom}?rev=${_rev|uricom}', result)
+        var request_opt = {
+            url: url,
+            method: 'DELETE',
+            json: true
+        }
+        return xrequest(request_opt, request_cb_factory(cb))
+    })
 }
 
 exports.create_channel = function(opt, cb) {
@@ -410,7 +454,9 @@ exports.create_chat = function(opt, cb) {
         var request_opt = {
             url: url,
             method: 'PUT',
-            headers:{},
+            headers:{
+                'Accept': 'application/json'
+            },
             multipart: [{
                 'Content-Type': 'application/json',
                 body: JSON.stringify(body)
@@ -498,7 +544,7 @@ function clear_state() {
 
 function state_filename() {
     var path = require('path')
-    var tmp_dir = process.env['temp']
+    var tmp_dir = process.env['temp'] || '/tmp'
     var state_filename = process.env['mcli-state'] || 'mcli-state.json'
     var full_filename = path.resolve(tmp_dir, state_filename)
     return full_filename
@@ -541,6 +587,16 @@ function xrequest(opt, cb) {
         }
         last_state.cookie_jar = cookie_jar._jar.serializeSync() // hack, break the request lib wrapper
         set_state(last_state)
+
+        if (typeof body === 'string' && /application\/json/.test(res.headers['content-type'])) {
+            try {debugger
+                body = JSON.parse(body)
+            }
+            catch (err) {
+                cb(err, res, body)
+                return
+            }
+        }
 
         /*
         // DEBUG: print all the information

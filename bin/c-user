@@ -2,13 +2,15 @@
 
 var m = require('../index')
 var vstr = require('vstr')
-var argv = require('yargs').usage('Usage: c-user -n <name> -p <password>')
+var argv = require('yargs').usage('Usage: c-user -n <name> -d <display-name> -p <password>')
                            .option('name', {alias: 'n', demand: true, type: 'string'})
+                           .option('display-name', {alias: 'd', demand: true, type: 'string'})
                            .option('password', {alias: 'p', demand: true, type: 'string'})
                            .argv
 
 var opt = {
     name: argv.name,
-    password: argv.password
+    password: argv.password,
+    display_name: argv['display-name']
 }
 m.create_user(opt, require('../cmd_cb'))

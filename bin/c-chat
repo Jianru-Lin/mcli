@@ -5,7 +5,7 @@ var url = require('url')
 var fs = require('fs')
 var path = require('path')
 
-var usage = 'Usage: c-chat -c <creator> -p [yes|no] -d /room/<room-id>/<channel-id>[/<user-name>] -t <content-type> -v <content> [-f <file>]' + '\n' +
+var usage = 'Usage: c-chat -c <creator> -p [yes|no] -d /room/<room-id>/<channel-id>[/<user-name>] -t <content-type> -v <content> [-f <file>] [-m <mentions>]' + '\n' +
             '       c-chat -c <creator> -p [yes|no] -d /user/<user-name> -t <content-type> -v <content> [-f <file>] [-m <mentions>]' +
             '' + '\n' +
             'Examples:' + '\n' +
