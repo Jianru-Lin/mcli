@@ -1,47 +1,47 @@
 {
-  "name": "mcli",
-  "version": "0.0.29",
-  "description": "miaodeli command line interface.",
-  "main": "index.js",
-  "bin": {
-    "c-chat": "bin/c-chat",
-    "c-room": "bin/c-room",
-    "c-room-channel": "bin/c-room-channel",
-    "c-session": "bin/c-session",
-    "c-user": "bin/c-user",
-    "d-room": "bin/d-room",
-    "d-session": "bin/d-session",
-    "d-user": "bin/d-user",
-    "d-user-portrait": "bin/d-user-portrait",
-    "r-room": "bin/r-room",
-    "r-session": "bin/r-session",
-    "r-user": "bin/r-user",
-    "r-user-portrait": "bin/r-user-portrait",
-    "state": "bin/state",
-    "u-user": "bin/u-user",
-    "u-user-portrait": "bin/u-user-portrait"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Jianru-Lin/mcli.git"
-  },
-  "author": {
-    "name": "Jianru Lin"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Jianru-Lin/mcli/issues"
-  },
-  "homepage": "https://github.com/Jianru-Lin/mcli#readme",
-  "dependencies": {
-    "mime": "^1.3.4",
-    "request": "^2.61.0",
-    "request-debug": "^0.2.0",
-    "uuid": "^2.0.1",
-    "vstr": "^1.0.0",
-    "yargs": "^3.21.0"
-  }
+    "name": "mcli",
+    "version": "0.0.30",
+    "description": "miaodeli command line interface.",
+    "main": "index.js",
+    "bin": {
+        "c-chat": "bin/c-chat",
+        "c-room": "bin/c-room",
+        "c-room-channel": "bin/c-room-channel",
+        "c-session": "bin/c-session",
+        "c-user": "bin/c-user",
+        "d-room": "bin/d-room",
+        "d-session": "bin/d-session",
+        "d-user": "bin/d-user",
+        "d-user-portrait": "bin/d-user-portrait",
+        "r-room": "bin/r-room",
+        "r-session": "bin/r-session",
+        "r-user": "bin/r-user",
+        "r-user-portrait": "bin/r-user-portrait",
+        "state": "bin/state",
+        "u-user": "bin/u-user",
+        "u-user-portrait": "bin/u-user-portrait"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Jianru-Lin/mcli.git"
+    },
+    "author": {
+        "name": "Jianru Lin"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Jianru-Lin/mcli/issues"
+    },
+    "homepage": "https://github.com/Jianru-Lin/mcli#readme",
+    "dependencies": {
+        "mime": "^1.3.4",
+        "request": "^2.61.0",
+        "request-debug": "^0.2.0",
+        "uuid": "^2.0.1",
+        "vstr": "^1.0.0",
+        "yargs": "^3.21.0"
+    }
 }
