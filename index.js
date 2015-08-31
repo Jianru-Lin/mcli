@@ -545,8 +545,8 @@ function clear_state() {
 function state_filename() {
     var path = require('path')
     var tmp_dir = process.env['temp'] || '/tmp'
-    var state_filename = process.env['mcli-state'] || 'mcli-state.json'
-    var full_filename = path.resolve(tmp_dir, state_filename)
+    var state_filename = process.env['MCLI-STATE'] || path.resolve(tmp_dir, 'mcli-state.json')
+    var full_filename = path.resolve(state_filename)
     return full_filename
 }
 
