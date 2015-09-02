@@ -1,6 +1,6 @@
 {
     "name": "mcli",
-    "version": "0.0.33",
+    "version": "1.0.33",
     "description": "miaodeli command line interface.",
     "main": "index.js",
     "bin": {
