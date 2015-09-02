@@ -257,8 +257,9 @@ exports.create_room = function(opt, cb) {
     assert(typeof opt.title === 'string', 'invalid argument: opt.title')
     assert(typeof opt.intro === 'string', 'invalid argument: opt.intro')
 
-    var url = base_url + 'room/'
+    var url = base_url + 'happyproto/'
     var body = {
+        type: 'room',
         creator: opt.creator,
         next_channel_id: 1,
         channels: [{
@@ -286,7 +287,7 @@ exports.retrive_room = function(opt, cb) {
 
     assert(typeof opt.id === 'string', 'invalid argument: opt.id')
 
-    var url = vstr(base_url + 'room/${id|uricom}', opt)
+    var url = vstr(base_url + 'happyproto/${id|uricom}', opt)
     var request_opt = {
         url: url,
         method: 'GET',
@@ -318,7 +319,7 @@ exports.delete_room = function(opt, cb) {
             return
         }
 
-        var url = vstr(base_url + 'room/${_id|uricom}?rev=${_rev|uricom}', result)
+        var url = vstr(base_url + 'happyproto/${_id|uricom}?rev=${_rev|uricom}', result)
         var request_opt = {
             url: url,
             method: 'DELETE',
@@ -366,7 +367,7 @@ exports.create_channel = function(opt, cb) {
         room.channels.push(new_channel)
 
         // well, it's time to apply our modify
-        var url = vstr(base_url + 'room/${_id|uricom}?rev=${_rev|uricom}', room)
+        var url = vstr(base_url + 'happyproto/${_id|uricom}?rev=${_rev|uricom}', room)
         var request_opt = {
             url: url,
             method: 'PUT',
@@ -430,6 +431,7 @@ exports.create_chat = function(opt, cb) {
     // ok, prepare my request
 
     var body = {
+        type: 'chat',
         creator: opt.creator,
         private: opt.private,
         dest: opt.dest,
@@ -450,7 +452,7 @@ exports.create_chat = function(opt, cb) {
             length: fs.lstatSync(opt.file).size // EXCEPTION Maybe
         }
 
-        var url = base_url + 'chat/' + generate_uuid()
+        var url = base_url + 'happyproto/' + generate_uuid()
         var request_opt = {
             url: url,
             method: 'PUT',
@@ -467,7 +469,7 @@ exports.create_chat = function(opt, cb) {
         }
     }
     else {
-        var url = base_url + 'chat/'
+        var url = base_url + 'happyproto/'
         var request_opt = {
             url: url,
             method: 'POST',
