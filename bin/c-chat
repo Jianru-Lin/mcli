@@ -86,7 +86,7 @@ function set_dest() {
         opt.dest.channel_id = channel_id
         if (user) {
             opt.dest.user = user
-        }debugger
+        }
     }
     else if (p.indexOf(user_prefix) === 0) {
         var text = p.substring(user_prefix.length)

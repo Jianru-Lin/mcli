@@ -3,7 +3,7 @@
 var m = require('../index')
 var fs = require('fs')
 var path = require('path')
-var argv = require('yargs').usage('Usage: c-dd [-f <design-document-file> [-n <name>]]')
+var argv = require('yargs').usage('Usage: u-dd [-f <design-document-file> [-n <name>]]')
                            .option('file', {alias: 'f', demand: false, type: 'string'})
                            .option('name', {alias: 'n', demand: false, type: 'string'})
                            .argv
@@ -29,4 +29,4 @@ var opt = {
 	design_doc: dd.design_doc
 }
 
-m.create_design_doc(opt, require('../cmd_cb'))
+m.update_design_doc(opt, require('../cmd_cb'))

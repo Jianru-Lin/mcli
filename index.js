@@ -46,6 +46,39 @@ exports.retrive_design_doc = function(opt, cb) {
     return xrequest(request_opt, request_cb_factory(cb))
 }
 
+exports.update_design_doc = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    assert(is_string(opt.name), 'invalid argument: opt.name')
+    assert(is_object(opt.design_doc), 'invalid argument: opt.design_doc')
+
+    var design_doc = fix_design_doc(opt.design_doc)
+
+    // retrive design document first
+    exports.retrive_design_doc({name: opt.name}, function(err, result) {
+        if (err) {
+            cb(err, null)
+            return
+        }
+        else if (result.error) {
+            cb(null, result)
+            return
+        }
+
+        var url = vstr(base_url + 'happyproto/_design/${name|uricom}?rev=${_rev|uricom}', {name: opt.name, _rev: result._rev})
+        var body = design_doc
+        var request_opt = {
+            url: url,
+            method: 'PUT',
+            json: true,
+            body: body
+        }
+        return xrequest(request_opt, request_cb_factory(cb))
+    })
+}
+
 exports.delete_design_doc = function(opt, cb) {
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')

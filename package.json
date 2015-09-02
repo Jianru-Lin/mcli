@@ -1,6 +1,6 @@
 {
     "name": "mcli",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "description": "miaodeli command line interface.",
     "main": "index.js",
     "bin": {
@@ -21,6 +21,7 @@
         "r-user": "bin/r-user",
         "r-user-portrait": "bin/r-user-portrait",
         "state": "bin/state",
+        "u-dd": "bin/u-dd",
         "u-user": "bin/u-user",
         "u-user-portrait": "bin/u-user-portrait"
     },
