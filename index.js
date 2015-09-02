@@ -9,6 +9,72 @@ var base_url = 'http://tv.miaodeli.com/couchdb/'
 // - error
 // - result
 
+exports.create_design_doc = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    assert(is_string(opt.name), 'invalid argument: opt.name')
+    assert(is_object(opt.design_doc), 'invalid argument: opt.design_doc')
+
+    var design_doc = fix_design_doc(opt.design_doc)
+
+    var url = vstr(base_url + 'happyproto/_design/${name|uricom}', opt)
+    var body = design_doc
+    var request_opt = {
+        url: url,
+        method: 'PUT',
+        json: true,
+        body: body
+    }
+    return xrequest(request_opt, request_cb_factory(cb))
+}
+
+exports.retrive_design_doc = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    assert(typeof opt.name === 'string', 'invalid argument: opt.name')
+
+    var url = vstr(base_url + 'happyproto/_design/${name|uricom}', opt)
+    var request_opt = {
+        url: url,
+        method: 'GET',
+        json: true
+    }
+    return xrequest(request_opt, request_cb_factory(cb))
+}
+
+exports.delete_design_doc = function(opt, cb) {
+    assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
+    assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
+    cb = cb || function() {}
+
+    assert(typeof opt.name === 'string', 'invalid argument: opt.name')
+
+    // retrive design document first
+    exports.retrive_design_doc({name: opt.name}, function(err, result) {
+        if (err) {
+            cb(err, null)
+            return
+        }
+        else if (result.error) {
+            cb(null, result)
+            return
+        }
+
+        var user = result
+        var url = vstr(base_url + 'happyproto/_design/${name|uricom}?rev=${_rev|uricom}', {name: opt.name, _rev: result._rev})
+        var request_opt = {
+            url: url,
+            method: 'DELETE',
+            json: true
+        }
+        return xrequest(request_opt, request_cb_factory(cb))
+    })
+}
+
 exports.create_user = function(opt, cb) {
     assert(typeof opt === 'object' && opt != null, 'invalid argument: opt')
     assert(cb === null || cb === undefined || typeof cb === 'function', 'invalid argument: cb')
@@ -697,4 +763,20 @@ function request_cb_factory(cb) {
         }
         cb(null, body)
     }
+}
+
+function fix_design_doc(dd) {
+    var new_dd = {}
+    for (var name in dd) {
+        if (!dd.hasOwnProperty(name)) {
+            continue
+        }
+        else if (typeof name === 'function') {
+            new_dd[name] = dd[name].toString()
+        }
+        else {
+            new_dd[name] = dd[name]
+        }
+    }
+    return new_dd
 }

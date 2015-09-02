@@ -1,4 +1,4 @@
-module.exports = function(err, result) {debugger
+module.exports = function(err, result) {
     if (err) {
         console.error(err.toString())
     }

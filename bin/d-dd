@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+var m = require('../index')
+var argv = require('yargs').usage('Usage: d-dd -n <design-document-name>')
+                           .option('name', {alias: 'n', demand: true, type: 'string'})
+                           .argv
+
+var opt = {
+    name: argv.name
+}
+m.delete_design_doc(opt, require('../cmd_cb'))

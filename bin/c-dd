@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+var m = require('../index')
+var fs = require('fs')
+var path = require('path')
+var argv = require('yargs').usage('Usage: c-dd [-f <design-document-file> [-n <name>]]')
+                           .option('file', {alias: 'f', demand: false, type: 'string'})
+                           .option('name', {alias: 'n', demand: false, type: 'string'})
+                           .argv
+
+var filename = argv.file
+var filename_abs = filename ? path.resolve(filename) : path.resolve(__dirname, '../bin_lib/dd.js')
+
+if (!fs.existsSync(filename_abs)) {
+	console.error('file not found: ' + filename_abs)
+	process.exit(1)
+}
+
+try {
+	var dd = require(filename_abs)
+}
+catch (err) {
+	console.error(err.toString())
+	process.exit(1)
+}
+
+var opt = {
+	name: argv.name || dd.name,
+	design_doc: dd.design_doc
+}
+debugger
+m.create_design_doc(opt, require('../cmd_cb'))
